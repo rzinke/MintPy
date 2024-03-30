@@ -541,14 +541,12 @@ def plot_slice(ax, data, metadata, inps):
         # Reference (InSAR) data to a GNSS site
         coord = ut.coordinate(metadata)
         if inps.disp_gps and inps.gps_component and inps.ref_gps_site:
-            ref_site_gps = GPS(site=inps.ref_gps_site)
-            ref_site_gps.open()
-            ref_site_lalo = ref_site_gps.get_stat_lat_lon(print_msg=False)
-            y, x = coord.geo2radar(ref_site_lalo[0], ref_site_lalo[1])[0:2]
+            ref_site = GPS(site=inps.ref_gps_site, source=inps.gps_source)
+            y, x = coord.geo2radar(ref_site.site_lat, ref_site.site_lon)[0:2]
             ref_data = data[y - inps.pix_box[1], x - inps.pix_box[0]]
             data -= ref_data
             vprint('referencing InSAR data to the pixel nearest to GNSS station: '
-                   f'{inps.ref_gps_site} at [{ref_site_lalo[0]:.6f}, {ref_site_lalo[1]:.6f}] '
+                   f'{inps.ref_gps_site} at [{ref_site.site_lat:.6f}, {ref_site.site_lon:.6f}] '
                    f'by substrating {ref_data:.3f} {inps.disp_unit}')
             # do not show the original InSAR reference point
             inps.disp_ref_pixel = False
